@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 import math
 
 from src.differentiation import (
@@ -51,7 +51,17 @@ def get_function(expr):
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return jsonify({
+        "status": "Numerical Analysis API running",
+        "endpoints": [
+            "/differentiate",
+            "/integrate",
+            "/bisection",
+            "/newton",
+            "/interpolate",
+            "/error"
+        ]
+    })
 
 
 @app.route("/differentiate", methods=["POST"])
@@ -187,3 +197,4 @@ def error_api():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
