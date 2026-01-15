@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Numerical Analysis Software</title>
+
+<!-- MathJax -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async
+ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+<style>
+
+body {
+ background: radial-gradient(circle at top, #1a2b56, #0b1220);
+ color:white;
+ font-family:"Segoe UI", Arial;
+ margin:0;
+ padding-bottom:40px;
+}
+
+h1{
+ text-align:center;
+ padding:20px;
+ border-bottom:2px solid #1f3b94;
+ background:#0d1630;
+ letter-spacing:.7px;
+}
+
+.container {
+ width:900px;
+ margin:auto;
+ margin-top:20px;
+}
+
+/* CARD SECTIONS */
+.card {
+ background:linear-gradient(145deg, #0e1a35, #0a1024);
+ padding:22px;
+ border-radius:12px;
+ margin-top:20px;
+ border:1px solid #1f3b94;
+ transition:0.3s;
+}
+
+.card:hover{
+ transform: scale(1.01);
+ box-shadow:0px 0px 20px rgba(0,123,255,.35);
+}
+
+/* BUTTON */
+button {
+ background: linear-gradient(145deg,#007bff,#005ad9);
+ border:none;
+ color:white;
+ padding:10px 22px;
+ border-radius:6px;
+ cursor:pointer;
+ margin:6px;
+ transition:0.3s;
+ font-weight:600;
+}
+
+button:hover{
+ background:#0056b3;
+ transform:translateY(-2px);
+}
+
+select,input {
+ padding:10px;
+ margin:6px;
+ border-radius:6px;
+ border:none;
+ width:230px;
+ background:#0b1220;
+ color:white;
+ border:1px solid #1f3b94;
+}
+
+pre {
+ background:black;
+ padding:12px;
+ border-radius:8px;
+ border:1px solid #1f3b94;
+ font-size:15px;
+}
+
+/* FORMULA BOX */
+.formulaBox{
+ background:#0b1220;
+ padding:10px;
+ border-radius:8px;
+ border:1px solid #1f3b94;
+ margin-bottom:10px;
+}
+
+/* TOAST MESSAGE */
+.toast{
+ position:fixed;
+ right:20px;
+ top:20px;
+ padding:12px 18px;
+ border-radius:7px;
+ display:none;
+ z-index:10;
+ font-weight:bold;
+}
+
+.success{background:#14c414;}
+.error{background:#d83434;}
+
+.hidden{display:none;}
+
+</style>
+</head>
+
+<body>
+
+<h1>NUMERICAL ANALYSIS SOFTWARE</h1>
+
+<div class="toast" id="toast"></div>
+
+<div class="container">
+
+<div class="card">
+<h2>Select Operation</h2>
+
+<select id="operation" onchange="showPanel()">
+ <option value="">-- Choose Operation --</option>
+ <option value="diff">Differentiation</option>
+ <option value="root">Root Finding</option>
+ <option value="int">Integration</option>
+ <option value="interp">Interpolation</option>
+ <option value="error">Error Analysis</option>
+</select>
+</div>
+
+<!-- DIFFERENTIATION -->
+<div id="diffPanel" class="card hidden">
+<h2>Differentiation</h2>
+
+<div class="formulaBox">
+Forward: \( f'(x) \approx \frac{f(x+h)-f(x)}{h} \)<br>
+Backward: \( f'(x) \approx \frac{f(x)-f(x-h)}{h} \)<br>
+Central: \( f'(x) \approx \frac{f(x+h)-f(x-h)}{2h} \)
+</div>
+
+<input id="dexpr" placeholder="Enter f(x)">
+<input id="dx" placeholder="x">
+<input id="dh" placeholder="h">
+
+<button onclick="differentiate()">Compute</button>
+<button onclick="clearDiff()">Clear</button>
+
+<pre id="diffOut"></pre>
+</div>
+
+<!-- ROOT -->
+<div id="rootPanel" class="card hidden">
+<h2>Root Finding</h2>
+
+<div class="formulaBox">
+Bisection: Root lies where \( f(a)\cdot f(b)<0 \)<br>
+Newton Raphson: \( x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)} \)
+</div>
+
+<select id="rootMethod">
+<option value="bisection">Bisection</option>
+<option value="newton">Newton Raphson</option>
+</select>
+
+<div id="bisectionBox">
+ <input id="bexpr" placeholder="Enter f(x)">
+ <input id="ba" placeholder="a">
+ <input id="bb" placeholder="b">
+</div>
+
+<div id="newtonBox" class="hidden">
+ <input id="nexpr" placeholder="Enter f(x)">
+ <input id="nder" placeholder="Enter f'(x)">
+ <input id="nx0" placeholder="Initial guess">
+</div>
+
+<button onclick="solveRoot()">Solve</button>
+<button onclick="clearRoot()">Clear</button>
+
+<pre id="rootOut"></pre>
+</div>
+
+<!-- INTEGRATION -->
+<div id="intPanel" class="card hidden">
+<h2>Integration</h2>
+
+<div class="formulaBox">
+Trapezoidal: \( I \approx \frac{h}{2}[f(a)+2\Sigma f(x)+f(b)] \)<br>
+Simpson: \( I \approx \frac{h}{3}[f(a)+4f(x)+2f(x)+f(b)] \)
+</div>
+
+<input id="iexpr" placeholder="Enter f(x)">
+<input id="ia" placeholder="a">
+<input id="ib" placeholder="b">
+<input id="inVal" placeholder="n">
+
+<button onclick="integrate()">Integrate</button>
+<button onclick="clearIntegration()">Clear</button>
+
+<pre id="intOut"></pre>
+</div>
+
+<!-- INTERPOLATION -->
+<div id="interpPanel" class="card hidden">
+<h2>Newton Forward Interpolation</h2>
+
+<div class="formulaBox">
+\( f(x)= f(x_0)+u\Delta f(x_0)+\frac{u(u−1)}{2!}\Delta^2 f(x_0)+\frac{u(u−1)(u−2)}{3!}\Delta^3 f(x_0)\)
+</div>
+
+<input id="xvals" placeholder="X values: 1,2,3">
+<input id="yvals" placeholder="Y values: 2,4,8">
+<input id="target" placeholder="Target x">
+
+<button onclick="interpolate()">Compute</button>
+<button onclick="clearInterp()">Clear</button>
+
+<pre id="intpOut"></pre>
+</div>
+
+<!-- ERROR -->
+<div id="errorPanel" class="card hidden">
+<h2>Error Analysis</h2>
+
+<div class="formulaBox">
+Absolute: \( |T-A| \)<br>
+Relative: \( \frac{|T-A|}{|T|} \)<br>
+Percentage: \( \frac{|T-A|}{|T|}\times 100\% \)
+</div>
+
+<input id="trueVal" placeholder="True Value (T)">
+<input id="deltaVal" placeholder="Uncertainty (± ΔT) [optional]">
+<input id="approxVal" placeholder="Approximate Value (A)">
+
+<button onclick="computeError()">Compute</button>
+<button onclick="clearError()">Clear</button>
+
+<pre id="errorOut"></pre>
+</div>
+
+</div>
+
+<script>
+
+/* Toast Notification */
+function showToast(msg,type){
+ let toast=document.getElementById("toast");
+ toast.innerText=msg;
+ toast.className="toast "+type;
+ toast.style.display="block";
+ setTimeout(()=>toast.style.display="none",2500);
+}
+
+/* Existing JS Logic Remains */
+function showPanel(){
+ diffPanel.classList.add("hidden");
+ rootPanel.classList.add("hidden");
+ intPanel.classList.add("hidden");
+ interpPanel.classList.add("hidden");
+ errorPanel.classList.add("hidden");
+
+ let op = operation.value;
+ if(op==="diff") diffPanel.classList.remove("hidden");
+ if(op==="root") rootPanel.classList.remove("hidden");
+ if(op==="int") intPanel.classList.remove("hidden");
+ if(op==="interp") interpPanel.classList.remove("hidden");
+ if(op==="error") errorPanel.classList.remove("hidden");
+}
+
+document.getElementById("rootMethod").addEventListener("change",()=>{
+ if(rootMethod.value==="bisection"){
+  bisectionBox.classList.remove("hidden");
+  newtonBox.classList.add("hidden");
+ }else{
+  newtonBox.classList.remove("hidden");
+  bisectionBox.classList.add("hidden");
+ }
+});
+
+/* Your Same Backend Calls (UNCHANGED) */
+async function differentiate(){
+ let res = await fetch("/differentiate",{method:"POST",headers:{"Content-Type":"application/json"},
+ body:JSON.stringify({expression:dexpr.value,x:dx.value,h:dh.value})})
+ let d = await res.json();
+ diffOut.innerText =
+ `Forward Difference = ${d["Forward Difference"]}
+Backward Difference = ${d["Backward Difference"]}
+Central Difference = ${d["Central Difference"]}`;
+ showToast("Differentiation Successful","success");
+}
+
+async function integrate(){
+ let res = await fetch("/integrate",{
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({
+    expression:iexpr.value,
+    a:ia.value,
+    b:ib.value,
+    n:inVal.value
+  })
+ });
+
+ let data = await res.json();
+
+ let output = "";
+
+ if(data["Trapezoidal Rule"] !== undefined){
+   output += "Trapezoidal Rule = " + data["Trapezoidal Rule"] + "\n";
+ }
+
+ if(data["Simpson Rule"] !== undefined){
+   output += "Simpson Rule = " + data["Simpson Rule"];
+ }
+
+ intOut.innerText = output;
+}
+
+
+async function solveRoot(){
+
+ if(rootMethod.value==="bisection"){
+
+  let r = await fetch("/bisection",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      expression:bexpr.value,
+      a:ba.value,
+      b:bb.value
+    })
+  });
+
+  let d = await r.json();
+
+  if(d.error){
+    rootOut.innerText = "❌ " + d.error;
+    showToast("Bisection Failed","error");
+    return;
+  }
+
+  let txt = "Root = " + d.Root + "\n\n";
+  txt += "Iter     a        b        c        f(c)\n";
+  txt += "-----------------------------------------\n";
+
+  d.Iterations.forEach(r=>{
+    txt +=
+      r.iter.toString().padEnd(6) +
+      r.a.toFixed(6).padEnd(10) +
+      r.b.toFixed(6).padEnd(10) +
+      r.c.toFixed(6).padEnd(10) +
+      r["f(c)"].toFixed(6) + "\n";
+  });
+
+  rootOut.innerText = txt;
+  showToast("Root Found","success");
+ }
+
+ else{
+
+  let r = await fetch("/newton",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      expression:nexpr.value,
+      derivative:nder.value,
+      x0:nx0.value
+    })
+  });
+
+  let d = await r.json();
+
+  if(d.error){
+    rootOut.innerText = "❌ " + d.error;
+    showToast("Newton Failed","error");
+    return;
+  }
+
+  let txt = "Root = " + d.Root + "\n\n";
+  txt += "Iter     x        f(x)     x_next\n";
+  txt += "--------------------------------\n";
+
+  d.Iterations.forEach(r=>{
+    txt +=
+      r.iter.toString().padEnd(6) +
+      r.x.toFixed(6).padEnd(10) +
+      r["f(x)"].toFixed(6).padEnd(10) +
+      r.x_next.toFixed(6) + "\n";
+  });
+
+  rootOut.innerText = txt;
+  showToast("Newton Raphson Success","success");
+ }
+}
+
+
+async function interpolate(){
+ let xArr=xvals.value.split(",").map(Number);
+ let yArr=yvals.value.split(",").map(Number);
+ let res = await fetch("/interpolate",{method:"POST",
+ headers:{"Content-Type":"application/json"},
+ body:JSON.stringify({x:xArr,y:yArr,target:parseFloat(target.value)})})
+ let data = await res.json();
+ let table = data["Difference Table"];
+ let html=`Interpolated Value = ${data["Interpolated Value"]}\n\nDifference Table:\n`
+ table.forEach(r=>{r.forEach(v=>html+= (v? v.toFixed(4):"").padEnd(10," "));html+="\n";})
+ intpOut.innerText=html;
+ showToast("Interpolation Done","success");
+}
+
+async function computeError(){
+ let payload = {
+   true: trueVal.value,
+   approx: approxVal.value
+ };
+
+ // Only send delta if user typed it
+ if(deltaVal.value.trim() !== ""){
+   payload.delta = deltaVal.value;
+ }
+
+ let res = await fetch("/error",{
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify(payload)
+ });
+
+ let d = await res.json();
+
+ let output = "";
+
+ if(d["True Value Range"]){
+   output += "True Value Range = " + d["True Value Range"] + "\n";
+ }
+
+ output +=
+  "Absolute Error = " + d["Absolute Error"] + "\n" +
+  "Relative Error = " + d["Relative Error"] + "\n" +
+  "Percentage Error = " + d["Percentage Error"] + "%";
+
+ errorOut.innerText = output;
+}
+
+/* Clears */
+function clearDiff(){dexpr.value="";dx.value="";dh.value="";diffOut.innerText="";}
+function clearRoot(){bexpr.value="";ba.value="";bb.value="";nexpr.value="";nder.value="";nx0.value="";rootOut.innerText="";}
+function clearIntegration(){iexpr.value="";ia.value="";ib.value="";inVal.value="";intOut.innerText="";}
+function clearInterp(){xvals.value="";yvals.value="";target.value="";intpOut.innerText="";}
+function clearError(){trueVal.value="";approxVal.value="";errorOut.innerText="";}
+
+</script>
+
+</body>
+</html>
