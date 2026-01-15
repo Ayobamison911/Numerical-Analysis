@@ -286,7 +286,7 @@ document.getElementById("rootMethod").addEventListener("change",()=>{
 
 /* Your Same Backend Calls (UNCHANGED) */
 async function differentiate(){
- let res = await fetch("/differentiate",{method:"POST",headers:{"Content-Type":"application/json"},
+ let res = await fetch("https://numerical-analysis-api.onrender.com/differentiate",{method:"POST",headers:{"Content-Type":"application/json"},
  body:JSON.stringify({expression:dexpr.value,x:dx.value,h:dh.value})})
  let d = await res.json();
  diffOut.innerText =
@@ -297,7 +297,7 @@ Central Difference = ${d["Central Difference"]}`;
 }
 
 async function integrate(){
- let res = await fetch("/integrate",{
+ let res = await fetch("https://numerical-analysis-api.onrender.com/integrate",{
   method:"POST",
   headers:{"Content-Type":"application/json"},
   body:JSON.stringify({
@@ -328,7 +328,7 @@ async function solveRoot(){
 
  if(rootMethod.value==="bisection"){
 
-  let r = await fetch("/bisection",{
+  let r = await fetch("https://numerical-analysis-api.onrender.com/bisection",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({
@@ -365,7 +365,7 @@ async function solveRoot(){
 
  else{
 
-  let r = await fetch("/newton",{
+  let r = await fetch("https://numerical-analysis-api.onrender.com/newton",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({
@@ -404,7 +404,7 @@ async function solveRoot(){
 async function interpolate(){
  let xArr=xvals.value.split(",").map(Number);
  let yArr=yvals.value.split(",").map(Number);
- let res = await fetch("/interpolate",{method:"POST",
+ let res = await fetch("https://numerical-analysis-api.onrender.com/interpolate",{method:"POST",
  headers:{"Content-Type":"application/json"},
  body:JSON.stringify({x:xArr,y:yArr,target:parseFloat(target.value)})})
  let data = await res.json();
@@ -426,7 +426,7 @@ async function computeError(){
    payload.delta = deltaVal.value;
  }
 
- let res = await fetch("/error",{
+ let res = await fetch("https://numerical-analysis-api.onrender.com/error",{
   method:"POST",
   headers:{"Content-Type":"application/json"},
   body:JSON.stringify(payload)
@@ -459,3 +459,4 @@ function clearError(){trueVal.value="";approxVal.value="";errorOut.innerText="";
 
 </body>
 </html>
+
